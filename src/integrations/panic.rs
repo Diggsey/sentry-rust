@@ -39,14 +39,18 @@ pub fn event_from_panic_info(info: &PanicInfo<'_>) -> Event<'static> {
         use crate::integrations::failure::event_from_error;
         use failure::Error;
 
+        eprintln!("sentry: checking for failure::Error");
         if let Some(e) = info.payload().downcast_ref::<Error>() {
+            eprintln!("sentry: found failure::Error");
             return Event {
                 level: Level::Fatal,
                 ..event_from_error(e)
             };
         }
+        eprintln!("sentry: not a failure::Error");
     }
 
+    eprintln!("sentry: extracting message from panic info");
     let msg = message_from_panic_info(info);
     Event {
         exception: vec![Exception {
@@ -67,9 +71,12 @@ pub fn event_from_panic_info(info: &PanicInfo<'_>) -> Event<'static> {
 /// double faults in some cases where it's known to be unsafe to invoke the
 /// Sentry panic handler.
 pub fn panic_handler(info: &PanicInfo<'_>) {
+    eprintln!("sentry: entered panic_handler");
     Hub::with_active(|hub| {
+        eprintln!("sentry: capturing event for active client...");
         hub.capture_event(event_from_panic_info(info));
     });
+    eprintln!("sentry: left panic_handler");
 }
 
 /// Registes the panic handler.

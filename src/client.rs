@@ -534,9 +534,13 @@ impl Client {
 
     /// Captures an event and sends it to sentry.
     pub fn capture_event(&self, event: Event<'static>, scope: Option<&Scope>) -> Uuid {
+        eprintln!("sentry: capturing event in client...");
         if let Some(ref transport) = *self.transport.read().unwrap() {
+            eprintln!("sentry: found transport");
             if self.sample_should_send() {
+                eprintln!("sentry: transport is active");
                 if let Some(event) = self.prepare_event(event, scope) {
+                    eprintln!("sentry: event is prepared, sending event...");
                     let event_id = event.event_id;
                     transport.send_event(event);
                     return event_id;
