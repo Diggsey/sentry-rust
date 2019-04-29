@@ -226,6 +226,7 @@ where
             Ok(v) => v,
             Err(e) => {
                 let e: Error = e.into();
+                eprintln!("Tried to unwrap an Err result: {}", e);
                 panic!(e)
             }
         }

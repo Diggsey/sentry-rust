@@ -279,6 +279,7 @@ impl Hub {
                     *self.last_event_id.write().unwrap() = Some(event_id);
                     event_id
                 } else {
+                    eprintln!("sentry: no client present!");
                     Default::default()
                 }
             })
