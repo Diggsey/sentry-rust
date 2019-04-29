@@ -266,6 +266,7 @@ implement_http_transport! {
                         }
                     }
 
+                    eprintln!("sentry: Sending event with id '{}'...", event.event_id);
                     match http_client
                         .post(url.as_str())
                         .json(&event)
@@ -273,6 +274,7 @@ implement_http_transport! {
                         .send()
                     {
                         Ok(resp) => {
+                            eprintln!("sentry: HTTP {} from sending event", resp.status());
                             if resp.status() == 429 {
                                 if let Some(retry_after) = resp
                                     .headers()
@@ -285,6 +287,7 @@ implement_http_transport! {
                             }
                         }
                         Err(err) => {
+                            eprintln!("sentry: Error when sending event: {}", err);
                             sentry_debug!("Failed to send event: {}", err);
                         }
                     }
