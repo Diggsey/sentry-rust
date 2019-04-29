@@ -540,8 +540,8 @@ impl Client {
             if self.sample_should_send() {
                 eprintln!("sentry: transport is active");
                 if let Some(event) = self.prepare_event(event, scope) {
-                    eprintln!("sentry: event is prepared, sending event...");
                     let event_id = event.event_id;
+                    eprintln!("sentry: event is prepared, sending event with id '{}'...", event_id);
                     transport.send_event(event);
                     return event_id;
                 }
